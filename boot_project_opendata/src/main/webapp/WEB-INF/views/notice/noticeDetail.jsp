@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/boardDetail.css">
+  <link rel="stylesheet" href="/css/comment.css">
 </head>
 <body>
 	<header>
@@ -135,11 +136,73 @@
 		      <c:otherwise>
 		        <button type="button" class="btn btn-list"
 		                onclick="location.href='${pageContext.request.contextPath}/notice'">목록</button>
+		        <c:if test="${not empty sessionScope.loginId}">
+		          <button type="button" class="btn btn-write" onclick="toggleCommentForm()">댓글 작성</button>
+		        </c:if>
 		      </c:otherwise>
 		    </c:choose>
 		  </div>
 	    </form>
 	  </div>
 	</section>
+
+	<!-- ✅ 댓글 섹션 -->
+	<section class="comment-section">
+	  <div class="write-container">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+	      <div>
+	        <div class="comment-header">댓글</div>
+	        <div class="comment-count" id="commentCount">댓글 0개</div>
+	      </div>
+	    </div>
+	    
+	    <!-- 댓글 작성 폼 (기본 숨김) -->
+	    <c:if test="${not empty sessionScope.loginId}">
+	      <div class="comment-form" id="commentForm" style="display: none;">
+	        <textarea id="commentContent" placeholder="댓글을 입력하세요..."></textarea>
+	        <div class="comment-form-actions">
+	          <button type="button" onclick="writeComment()">작성</button>
+	          <button type="button" onclick="cancelCommentForm()" style="background: #6c757d; margin-left: 8px;">취소</button>
+	        </div>
+	      </div>
+	    </c:if>
+	    
+	    <!-- 댓글 목록 -->
+	    <div class="comment-list" id="commentList">
+	      <!-- 댓글이 여기에 동적으로 로드됩니다 -->
+	    </div>
+	  </div>
+	</section>
+
+	<!-- 댓글 JavaScript -->
+	<script src="/js/comment.js"></script>
+	<script>
+	  // 페이지 로드 시 댓글 시스템 초기화
+	  window.addEventListener('DOMContentLoaded', function() {
+	    initNoticeComment(
+	      ${post.noticeNo},
+	      '${sessionScope.loginId}',
+	      ${sessionScope.isAdmin == true ? 'true' : 'false'}
+	    );
+	  });
+	  
+	  // 댓글 작성 폼 토글
+	  function toggleCommentForm() {
+	    const form = document.getElementById('commentForm');
+	    if (form.style.display === 'none') {
+	      form.style.display = 'block';
+	      document.getElementById('commentContent').focus();
+	    } else {
+	      form.style.display = 'none';
+	      document.getElementById('commentContent').value = '';
+	    }
+	  }
+	  
+	  // 댓글 작성 취소
+	  function cancelCommentForm() {
+	    document.getElementById('commentForm').style.display = 'none';
+	    document.getElementById('commentContent').value = '';
+	  }
+	</script>
 </body>
 </html>
