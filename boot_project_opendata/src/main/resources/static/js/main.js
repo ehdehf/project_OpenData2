@@ -1,73 +1,189 @@
-// 더보기 버튼
-document.addEventListener('DOMContentLoaded', function() {
-  const loadMoreBtn = document.getElementById('loadMoreBtn');
-  const additionalProducts = document.getElementById('additionalProducts');
-  if(!loadMoreBtn || !additionalProducts) return;
-  let isExpanded = false;
+// main.js
 
-  loadMoreBtn.addEventListener('click', function() {
-    if (!isExpanded) {
-      additionalProducts.classList.remove('hidden');
-      loadMoreBtn.textContent = '접기';
-      isExpanded = true;
-      additionalProducts.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      additionalProducts.classList.add('hidden');
-      loadMoreBtn.textContent = '더보기';
-      isExpanded = false;
-    }
-  });
+window.addEventListener('DOMContentLoaded', function() {
+  initChatbot();
+  initMap();
+  initControls();
+  initEvents();
 });
 
-// 책 속 한 줄: 좌우 스크롤
-(function(){
-  const track = document.getElementById('quotesTrack');
-  if(!track) return;
-  const prev = document.getElementById('quotesPrev');
-  const next = document.getElementById('quotesNext');
+// 챗봇 관련 초기화
+function initChatbot() {
+  const btnChatbotOpen = document.getElementById("chatbotBtn");
+  const btnChatbotClose = document.getElementById("chatbotClose");
+  const btnSend = document.getElementById("sendBtn");
+  const chatInput = document.getElementById("chatInput");
 
-  const cardWidth = () => {
-    const first = track.querySelector('.q-card');
-    if(!first) return 320;
-    return first.getBoundingClientRect().width + 16;
-  };
+  if (btnChatbotOpen) {
+    btnChatbotOpen.addEventListener("click", () => {
+      document.getElementById("chatbotModal").style.display = "block";
+    });
+  }
 
-  prev.addEventListener('click', ()=> track.scrollBy({left:-cardWidth(), behavior:'smooth'}));
-  next.addEventListener('click', ()=> track.scrollBy({left: cardWidth(), behavior:'smooth'}));
-})();
+  if (btnChatbotClose) {
+    btnChatbotClose.addEventListener("click", () => {
+      document.getElementById("chatbotModal").style.display = "none";
+    });
+  }
 
-// FAQ 토글
-(function(){
-  const items = document.querySelectorAll('.faq-item');
-  if(!items.length) return;
-  items.forEach(item => {
-    const q = item.querySelector('.faq-question');
-    const a = item.querySelector('.faq-answer');
-    const icon = item.querySelector('.faq-icon');
-    if(a){
-      a.style.maxHeight = '0px';
-      a.style.overflow = 'hidden';
-      a.style.boxSizing = 'border-box';
-      a.style.willChange = 'max-height';
-      a.style.transition = 'max-height 300ms cubic-bezier(.2,.6,.2,1), padding 300ms cubic-bezier(.2,.6,.2,1)';
-      a.style.paddingTop = '0px';
-      a.style.paddingBottom = '0px';
-    }
-    q.addEventListener('click', () => {
-      const open = a && a.style.maxHeight !== '0px';
-      if(open){
-        a.style.maxHeight = '0px';
-        a.style.paddingTop = '0px';
-        a.style.paddingBottom = '0px';
-        if(icon){ icon.style.transform = 'rotate(0deg)'; }
-        item.classList.remove('active');
-      } else {
-        a.style.maxHeight = (a.scrollHeight + 24) + 'px';
-        a.style.paddingTop = '8px';
-        a.style.paddingBottom = '12px';
-        if(icon){ icon.style.transform = 'rotate(180deg)'; }
-        item.classList.add('active');
+  if (btnSend) {
+    btnSend.addEventListener("click", () => {
+      console.log('전송 버튼 클릭');
+      sendUserMessage(chatInput.value);
+    });
+  }
+
+  if (chatInput) {
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        console.log('엔터키 눌림');
+        sendUserMessage(chatInput.value);
       }
     });
+  }
+}
+
+// 지도 초기화 함수 (실제 kakao.maps 사용 코드로 대체하세요)
+function initMap() {
+  const mapContainer = document.getElementById('kakao-map');
+  window.map = new kakao.maps.Map(mapContainer, { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 7 });
+  window.geocoder = new kakao.maps.services.Geocoder();
+  window.currentOverlay = null;
+  window.currentStationName = null;
+  window.markers = [];
+
+  // 지도 클릭 이벤트 (정보창 닫기)
+  kakao.maps.event.addListener(window.map, 'click', function() {
+    if (window.currentOverlay) {
+      window.currentOverlay.setMap(null);
+      window.currentOverlay = null;
+      window.currentStationName = null;
+    }
   });
-})();
+}
+
+// 기타 컨트롤 초기화 (검색, 내위치, 새로고침 등)
+function initControls() {
+  document.getElementById('btnSearch').addEventListener('click', () => {
+    const query = document.getElementById('searchInput').value.trim();
+    if (!query) return toast('검색어를 입력하세요');
+    window.geocoder.addressSearch(query, (res, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const latlng = new kakao.maps.LatLng(res[0].y, res[0].x);
+        window.map.setCenter(latlng);
+        window.map.setLevel(5);
+      } else toast('검색 결과가 없습니다');
+    });
+  });
+
+  document.getElementById('btnMyPos').addEventListener('click', () => {
+    const fixedLat = 35.1487052773634;
+    const fixedLng = 129.058893902842;
+    const latlng = new kakao.maps.LatLng(fixedLat, fixedLng);
+    window.map.setCenter(latlng);
+    window.map.setLevel(4);
+
+    if (!window.myMarker) {
+      window.myMarker = new kakao.maps.Marker({ position: latlng, map: window.map });
+    } else {
+      window.myMarker.setPosition(latlng);
+    }
+    toast('내 위치로 이동했습니다');
+  });
+
+  document.getElementById('btnRefresh').addEventListener('click', loadAllStations);
+  window.addEventListener('load', loadAllStations);
+}
+
+// 기타 이벤트들 (관심지역, 측정소 세부보기 등) 여기에 추가 가능
+
+// 메시지 전송 함수
+function sendUserMessage(message) {
+  if (!message.trim()) return;
+
+  displayMessage(message, "user");
+  document.getElementById("chatInput").value = "";
+
+  showTyping();
+
+  fetch('/api/gemini', {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: message })
+  })
+    .then(resp => resp.json())
+    .then(data => {
+      hideTyping();
+      const botText = data.contents?.[0]?.parts?.[0]?.text || "응답이 없습니다";
+      displayMessage(botText, "bot");
+    })
+    .catch(err => {
+      hideTyping();
+      displayMessage("“지금 Gemini가 잠시 바쁨! 조금 뒤 다시 시도해줘 😊”", "bot");
+      console.error('Fetch error:', err);
+    });
+}
+
+// 화면에 메시지 출력
+function displayMessage(text, sender = "bot") {
+  const box = document.getElementById("chatMessages");
+
+  const wrapper = document.createElement("div");
+  wrapper.className = sender === "user" ? "chat-msg user" : "chat-msg bot";
+
+  if (sender === "bot") {
+    const avatar = document.createElement("img");
+    avatar.className = "chat-avatar";
+    avatar.src = "/img/bot.png";
+    wrapper.appendChild(avatar);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "msg-bubble";
+  bubble.innerHTML = text;
+  wrapper.appendChild(bubble);
+
+  box.appendChild(wrapper);
+  box.scrollTop = box.scrollHeight;
+}
+
+// 간단 toast 메시지
+function toast(t) {
+  const m = document.getElementById('msg');
+  m.textContent = t;
+  m.style.display = 'block';
+  setTimeout(() => m.style.display = 'none', 2500);
+}
+
+// 로딩 표시 토글
+function showLoading(b) {
+  document.getElementById('loading').style.display = b ? 'block' : 'none';
+}
+
+// 타이핑 표시
+function showTyping() {
+  const box = document.getElementById("chatMessages");
+  if (document.getElementById("typing-indicator")) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-msg bot";
+  wrapper.id = "typing-indicator";
+  wrapper.innerHTML = `
+    <div class="msg-bubble typing-animation">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  `;
+  box.appendChild(wrapper);
+  box.scrollTop = box.scrollHeight;
+}
+
+// 타이핑 표시 제거
+function hideTyping() {
+  const typing = document.getElementById("typing-indicator");
+  if (typing) typing.remove();
+}
+
+// 로그인 상태 JSP에서 처리된 문자열로 받음
+const isLoggedIn = "${not empty sessionScope.loginId}";
