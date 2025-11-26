@@ -1,10 +1,12 @@
 package com.boot.controller;
 
 import com.boot.dao.BoardDAO;
+import com.boot.dto.AirQualityDTO;
 import com.boot.dto.BoardDTO;
 import com.boot.dto.FavoriteStationDTO;
 import com.boot.dto.StationDTO;
 import com.boot.dto.UserDTO;
+import com.boot.service.AirQualityService;
 import com.boot.service.UserService;
 import com.boot.util.AirQualityCalculator;
 import com.boot.util.ExcelReader;
@@ -35,7 +37,7 @@ public class MyPageController {
     BoardDAO boardDAO;  
     
     @Autowired
-    private ExcelReader excelReader;
+    private AirQualityService airQualityService;
     
     @Autowired
     private AirQualityCalculator airQualityCalculator;
@@ -70,8 +72,8 @@ public class MyPageController {
         // 메시지 전달
         model.addAttribute("msg", msg);
         
-        List<StationDTO> stations = excelReader.readStations();
-        Map<String, StationDTO> cityAverages = airQualityCalculator.calculateCityAverages(stations);
+        List<AirQualityDTO> stations = airQualityService.getAllAirQuality();
+        Map<String, AirQualityDTO> cityAverages = airQualityCalculator.calculateSidoAverages(stations);
 
         model.addAttribute("cityAverages", cityAverages.values());
         return "mypage"; 
