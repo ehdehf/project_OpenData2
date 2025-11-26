@@ -7,7 +7,7 @@ CREATE TABLE od_inquiry (
     status VARCHAR2(20) DEFAULT '대기중',  -- '대기중', '답변완료'
     created_date DATE DEFAULT SYSDATE,
     updated_date DATE DEFAULT SYSDATE,
-    CONSTRAINT fk_inquiry_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+    CONSTRAINT fk_od_inquiry_user FOREIGN KEY (user_id) REFERENCES opendata_users(user_id)
 );
 
 -- 답변 테이블 생성 (관리자 답변용)
@@ -17,7 +17,7 @@ CREATE TABLE od_inquiry_reply (
     admin_id VARCHAR2(50),  -- 관리자 ID (필요시 users 테이블에 관리자 구분 컬럼 추가)
     reply_content CLOB NOT NULL,
     created_date DATE DEFAULT SYSDATE,
-    CONSTRAINT fk_reply_inquiry FOREIGN KEY (inquiry_id) REFERENCES inquiry(inquiry_id) ON DELETE CASCADE
+    CONSTRAINT fk_od_reply_inquiry FOREIGN KEY (inquiry_id) REFERENCES od_inquiry(inquiry_id) ON DELETE CASCADE
 );
 
 -- 시퀀스 생성
