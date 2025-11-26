@@ -32,6 +32,9 @@ public class ViewController {
     
     @Autowired
     private AirQualityCalculator airQualityCalculator;
+
+    @Autowired
+    private ExcelReader excelReader;
     
     @Autowired
     private AirQualityService airQualityService;
