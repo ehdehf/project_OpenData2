@@ -835,7 +835,40 @@ html, body {
   justify-content: space-between;
   z-index: 2;
 }
+/* ===== 지도 위 오버레이 (검색창, 정보창 등) ===== */
+.map-overlay {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+}
+/* ===== CSV / Excel 다운로드 버튼 ===== */
+.top-download-bar {
+    width: 100%;
+    text-align: center;
+    margin-top: -50px;      /* 제목과 간격 조절 */
+    margin-bottom: 10px;    /* 지도와 간격 조절 */
+}
 
+.top-download-bar .download-btn {
+    background: #1a4e8a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 15px;
+    margin: 0 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.top-download-bar .download-btn:hover {
+    background: #296fc7;
+}
 /* ===== footer (고급 디자인) ===== */
 .footer {
   position: relative;
