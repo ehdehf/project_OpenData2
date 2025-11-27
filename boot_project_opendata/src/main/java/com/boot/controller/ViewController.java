@@ -57,6 +57,43 @@ public class ViewController {
         return "main";
     }
     
+    @GetMapping("/station/detail")
+    public String stationDetail(@RequestParam("name") String stationName, Model model) {
+        
+        // 전국 시도 평균 데이터는 헤더 등에 계속 사용되므로 함께 로드
+        List<AirQualityDTO> stations = airQualityService.getAllAirQuality();
+        Map<String, AirQualityDTO> cityAverages = airQualityCalculator.calculateSidoAverages(stations);
+        model.addAttribute("cityAverages", cityAverages.values());
+        
+        try {
+            // ① 특정 측정소의 실시간 상세 데이터 조회
+            AirQualityDTO detailData = airQualityService.getStationDetailData(stationName);
+            
+            if (detailData == null) {
+                // 데이터가 없는 경우 처리
+                String message = URLEncoder.encode("측정소 데이터를 찾을 수 없습니다: " + stationName, StandardCharsets.UTF_8.toString());
+                return "redirect:/main?error=" + message;
+            }
+
+            // ② 모델에 상세 데이터 추가
+            model.addAttribute("stationName", stationName);
+            model.addAttribute("detailData", detailData);
+            
+            return "stationDetail"; // ③ stationDetail.jsp로 이동
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 오류 발생 시 메인 페이지로 리디렉션
+            try {
+                String message = URLEncoder.encode("상세 정보 로드 중 오류가 발생했습니다.", StandardCharsets.UTF_8.toString());
+                return "redirect:/main?error=" + message;
+            } catch (Exception ex) {
+                return "redirect:/main";
+            }
+        }
+    }
+    
+
     // 회원가입 페이지
     @GetMapping("/register")
     public String register() {
