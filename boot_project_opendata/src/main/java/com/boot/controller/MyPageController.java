@@ -49,35 +49,54 @@ public class MyPageController {
         String user_id = (String) session.getAttribute("loginId");
         if (user_id == null) return "redirect:/login";
 
-        // ✅ 최신 회원 정보 조회
+        // 최신 회원 정보 조회
         UserDTO user = userService.getUserById(user_id);
+
+        if (user == null) {
+            // 유저 정보가 없으면 로그인 페이지로 이동
+            session.invalidate(); // 혹은 세션 초기화
+            return "redirect:/login";
+        }
+
         model.addAttribute("user", user);
 
-        // ✅ 세션 값 업데이트
+        // 세션 값 업데이트
         session.setAttribute("loginDisplayName", user.getUser_name());
         session.setAttribute("loginId", user.getUser_id());
         session.setAttribute("userEmail", user.getUser_email());
         session.setAttribute("userPhone", user.getUser_phone_num());
         session.setAttribute("userRegDate", user.getReg_date());
 
-        // ✅ 관심 지역 리스트 조회
+        // 관심 지역 리스트 조회
         List<FavoriteStationDTO> favorites = userService.getFavoriteList(user_id);
         model.addAttribute("favorites", favorites);
-
-        // ✅ 내가 작성한 게시글 목록 조회 (최신 5개)
+        
+       // 각 즐겨찾기 측정소의 현재 PM10 값 채우기
+        for (FavoriteStationDTO fav : favorites) {
+            // 이미 사용 중인 서비스/메서드 이름에 맞게 수정해서 사용
+        	AirQualityDTO aq = airQualityService.getStationDetailData(fav.getStationName());
+            if (aq != null) {
+                fav.setPm10Value(aq.getPm10Value());
+            }
+        }
+        
+        model.addAttribute("favorites", favorites);
+        
+        
+        // 내가 작성한 게시글 목록 조회 (최신 5개)
         List<BoardDTO> myBoardList = boardDAO.selectMyBoardList(user_id);
         model.addAttribute("myBoardList", myBoardList);
 
-        
         // 메시지 전달
         model.addAttribute("msg", msg);
-        
+
         List<AirQualityDTO> stations = airQualityService.getAllAirQuality();
         Map<String, AirQualityDTO> cityAverages = airQualityCalculator.calculateSidoAverages(stations);
-
         model.addAttribute("cityAverages", cityAverages.values());
-        return "mypage"; 
+
+        return "mypage";
     }
+
 
     // 회원 정보 수정
     @PostMapping("/update")
