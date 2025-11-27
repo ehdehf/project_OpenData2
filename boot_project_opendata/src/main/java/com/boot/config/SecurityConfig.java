@@ -25,22 +25,27 @@ public class SecurityConfig {
                     "/css/**", "/js/**", "/img/**",
                     "/api/**",
                     "/oauth/**",
-                    "/admin/login", "/admin/login_yn"
+
+                    // 관리자 로그인 전에 필요한 페이지들
+                    "/admin/login", "/admin/login_yn",
+                    "/admin/otp", "/admin/otpCheck"
                 ).permitAll()
+
                 .antMatchers("/admin/logout").permitAll()
-                .antMatchers("/admin/**").authenticated()
+                .antMatchers("/admin/resendOTP").permitAll()
+                .antMatchers("/admin/otp", "/admin/otpCheck").permitAll()
+
+
+                // 관리자 권한
+                .antMatchers("/admin/**").permitAll()
 
                 .anyRequest().permitAll()
             .and()
 
-            // 🔥 반드시 추가해야 remember-me 자동 구성 비활성화됨
             .rememberMe().disable()
-
-            // 일반 로그인 Security 비활성화
             .formLogin().disable()
             .httpBasic().disable()
 
-            // 로그아웃 (일반 사용자만)
             .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
