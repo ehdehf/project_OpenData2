@@ -181,4 +181,61 @@ public class AirApiController {
         }
         writer.flush();
     }
+	    /**
+     * ============================================
+     * 5) Excel 다운로드 (공공데이터 기반)
+     * ============================================
+     */
+    @GetMapping("/download/excel")
+    public void downloadExcel(javax.servlet.http.HttpServletResponse response) throws Exception {
+
+        List<AirQualityDTO> list = airQualityService.getAllAirQuality();
+
+        // 엑셀 워크북 생성
+        org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+        org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("AirQuality");
+
+        // 헤더 row 생성
+        org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+        String[] columns = {
+                "측정소", "시도", "위도", "경도",
+                "PM10", "PM2.5", "O3(ppm)", "NO2(ppm)",
+                "CO(ppm)", "SO2(ppm)"
+        };
+
+        for (int i = 0; i < columns.length; i++) {
+            header.createCell(i).setCellValue(columns[i]);
+            sheet.autoSizeColumn(i);
+        }
+
+        // 데이터 입력
+        int rowIdx = 1;
+
+        for (AirQualityDTO s : list) {
+            org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
+
+            row.createCell(0).setCellValue(s.getStationName());
+            row.createCell(1).setCellValue(s.getSidoName());
+            row.createCell(2).setCellValue(s.getDmY());
+            row.createCell(3).setCellValue(s.getDmX());
+
+            row.createCell(4).setCellValue(s.getPm10Value());
+            row.createCell(5).setCellValue(s.getPm25Value());
+
+            row.createCell(6).setCellValue(s.getO3Value());
+            row.createCell(7).setCellValue(s.getNo2Value());
+            row.createCell(8).setCellValue(s.getCoValue());
+            row.createCell(9).setCellValue(s.getSo2Value());
+        }
+
+        // 파일 다운로드 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=" +
+                        URLEncoder.encode("air_quality.xlsx", StandardCharsets.UTF_8));
+
+        // OutputStream으로 내보내기
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
 }
