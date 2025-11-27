@@ -9,24 +9,19 @@ function check_ok(){
 	// 폼 이름에 name 값으로 찾아감
 	if(reg_frm.user_id.value==""){
 		alert("아이디를 써주세요.");
-		reg_frm.user_id.focus();//입력안할때 깜빡임
+		reg_frm.user_id.focus();
 		return;
 	}
-	if(reg_frm.user_id.value.length< 4){
-			alert("아이디는 4글자이상이어야 합니다.");
-			reg_frm.user_id.focus();
-			return;
-		}
-	if(reg_frm.user_pw.value.length==0){
-			alert("패스워드는 반드시 입력해야 합니다.");
-			reg_frm.user_pw.focus();
-			return;
-		}
-	if(reg_frm.user_pw.value.length==0){
-			alert("패스워드는 반드시 입력해야 합니다.");
-			reg_frm.user_pw.focus();
-			return;
-		}
+	if(reg_frm.user_id.value.length < 4){
+		alert("아이디는 4글자이상이어야 합니다.");
+		reg_frm.user_id.focus();
+		return;
+	}
+	if(reg_frm.user_pw.value.length == 0){
+		alert("패스워드는 반드시 입력해야 합니다.");
+		reg_frm.user_pw.focus();
+		return;
+	}
 	if (!passwordRegex.test(reg_frm.user_pw.value)) {
         alert("비밀번호는 8~16자, 영문자, 숫자, 특수문자를 모두 포함해야 합니다.");
         reg_frm.user_pw.focus();
@@ -40,27 +35,39 @@ function check_ok(){
         return;
     }
 	
-	if(reg_frm.user_name.value.length==0){
-			alert("이름을 써주세요.");
-			reg_frm.user_name.focus();
-			return;
-		}
-	if(reg_frm.user_email.value.length==0){
-			alert("Email을 써주세요.");
-			reg_frm.user_email.focus();
-			return;
-		}
+	if(reg_frm.user_name.value.length == 0){
+		alert("이름을 써주세요.");
+		reg_frm.user_name.focus();
+		return;
+	}
+	if(reg_frm.user_email.value.length == 0){
+		alert("Email을 써주세요.");
+		reg_frm.user_email.focus();
+		return;
+	}
 	
-	if(reg_frm.user_phone_num.value.length==0){
-			alert("전화번호를 써주세요.");
-			reg_frm.user_phone_num.focus();
-			return;
-		}
+	if(reg_frm.user_phone_num.value.length == 0){
+		alert("전화번호를 써주세요.");
+		reg_frm.user_phone_num.focus();
+		return;
+	}
 		
  	//전화번호가 000-0000-0000형식인지 확인
 	if (!phonRegex.test(reg_frm.user_phone_num.value)) {
         alert("000-0000-0000형식으로 입력해주세요.");
         reg_frm.user_pw.focus();
+        return;
+    }
+
+    // 약관 동의(필수) 체크 확인
+    if (!document.getElementById("terms_required_service").checked) {
+        alert("서비스 이용약관(필수)에 동의해야 회원가입이 가능합니다.");
+        document.getElementById("terms_required_service").focus();
+        return;
+    }
+    if (!document.getElementById("terms_required_privacy").checked) {
+        alert("개인정보 처리방침(필수)에 동의해야 회원가입이 가능합니다.");
+        document.getElementById("terms_required_privacy").focus();
         return;
     }
 	
@@ -89,47 +96,42 @@ function chk_post(){
 	           // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
 	           var fullAddr = ''; // 최종 주소 변수
 	           var extraAddr = ''; // 조합형 주소 변수
-
+	 
 	           // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-	           if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+	           if (data.userSelectedType === 'R') { // 도로명 주소
 	               fullAddr = data.roadAddress;
-	            } else { // 사용자가 지번 주소를 선택했을 경우(J)
+	            } else { // 지번 주소
 	                fullAddr = data.jibunAddress;
 	            }
-
-	            // 사용자가 선택한 주소가 도로명 타입일때 조합한다.
+	 
+	            // 도로명 타입일 때 조합형 주소 처리
 	            if (data.userSelectedType === 'R') {
-	                //법정동명이 있을 경우 추가한다.
 	                if (data.bname !== '') {
 	                     extraAddr += data.bname;
 	                }
-	                // 건물명이 있을 경우 추가한다.
 	                if (data.buildingName !== '') {
 	                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
 	                }
-	                // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
 	                fullAddr += (extraAddr !== '' ? ' (' + extraAddr + ')' : '');
 	            }
-
-	            // 우편번호와 주소 정보를 해당 필드에 넣는다.
-	            document.getElementById('user_post_num').value = data.zonecode; //5자리 새우편번호 사용
-	            document.getElementById('user_address').value = fullAddr;
-
 	 
-	            // 커서를 상세주소 필드로 이동한다.
+	            document.getElementById('user_post_num').value = data.zonecode;
+	            document.getElementById('user_address').value = fullAddr;
 	            document.getElementById('user_detail_address').focus();
 	        }
 	    }).open();
-	}
+}
+
+// 이메일 인증 코드 보내기
 function sendAuthCode() {
 	var emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
     const email = document.getElementById("user_email").value;
 
     if(reg_frm.user_email.value.length==0){
-			alert("Email을 써주세요.");
-			reg_frm.user_email.focus();
-			return;
-		}
+		alert("Email을 써주세요.");
+		reg_frm.user_email.focus();
+		return;
+	}
 	if (!emailRegex.test(reg_frm.user_email.value)) {
         alert("메일형식으로 입력해주세요.");
         reg_frm.user_email.focus();
@@ -144,7 +146,6 @@ function sendAuthCode() {
                 document.getElementById("user_email").focus();
                 return;
             } else if (!isNaN(result)) {
-            //} else if (result === "success") {
                 alert("인증번호가 전송되었습니다. (테스트용: " + result + ")");
                 document.getElementById("user_email_chk").disabled = false;
                 document.querySelector('[onclick="verifyAuthCode()"]').disabled = false;
@@ -158,6 +159,7 @@ function sendAuthCode() {
         });
 }
 
+// 이메일 인증번호 확인
 function verifyAuthCode(){
 	const authCode = document.getElementById("user_email_chk").value;
 	
@@ -185,4 +187,57 @@ function verifyAuthCode(){
             console.error("에러:", error);
             alert("서버 오류로 인증에 실패했습니다.");
         });
+}
+
+/** 약관 모달 열기 */
+function showTerms(type) {
+    const modal = document.getElementById("termsModal");
+    const titleEl = document.getElementById("termsModalTitle");
+    const textEl = document.getElementById("termsModalText");
+
+    let title = "";
+    let content = "";
+
+    if (type === "service") {
+        title = "서비스 이용약관";
+        content = 
+            "<h4>제1조 (목적)</h4>" +
+            "<p>본 약관은 공공데이터를 활용한 대기질 정보 제공 서비스의 이용과 관련하여 필요한 사항을 규정합니다.</p>" +
+            "<h4>제2조 (서비스의 제공)</h4>" +
+            "<p>본 서비스는 환경부 실시간 대기질 정보를 공공데이터포털을 통해 제공합니다. 서비스 안정적인 제공을 위해 시스템 점검, 기능 변경 등이 이루어질 수 있습니다.</p>" +
+            "<h4>제3조 (이용자의 의무)</h4>" +
+            "<p>이용자는 타인의 정보를 도용하거나 서비스 운영을 방해하는 행위를 해서는 안 됩니다. 약관 위반 시 서비스 이용이 제한될 수 있습니다.</p>";
+    } else if (type === "privacy") {
+        title = "개인정보 처리방침";
+        content = 
+            "<h4>1. 수집하는 개인정보 항목</h4>" +
+            "<p>아이디, 비밀번호, 이름, 이메일, 연락처, 주소 등 회원가입에 필요한 정보를 수집합니다.</p>" +
+            "<h4>2. 개인정보의 이용 목적</h4>" +
+            "<p>대기질 정보 제공, 회원 관리, 문의 응대, 서비스 개선을 위해 사용됩니다.</p>" +
+            "<h4>3. 개인정보의 보유 및 이용 기간</h4>" +
+            "<p>관련 법령에서 정한 기간 동안 보관 후 안전하게 파기합니다.</p>" +
+            "<h4>4. 이용자의 권리</h4>" +
+            "<p>이용자는 개인정보 열람·정정·삭제를 요청할 수 있으며, 마이페이지에서 직접 처리하실 수 있습니다.</p>";
+    } else if (type === "optional") {
+        title = "대기질 관련 공지 및 서비스 안내 수신 동의 (선택)";
+        content = 
+            "<h4>수신 동의 내용</h4>" +
+            "<p>대기질 경보, 서비스 점검, 기능 업데이트 등과 같은 안내를 이메일 등으로 받아볼 수 있습니다.</p>" +
+            "<h4>선택 항목 안내</h4>" +
+            "<p>본 항목은 선택 사항으로, 동의하지 않아도 기본 서비스 이용에는 제한이 없습니다.</p>" +
+            "<h4>동의 철회</h4>" +
+            "<p>수신 동의는 마이페이지 또는 고객센터를 통해 언제든지 변경·철회할 수 있습니다.</p>";
+    }
+
+    titleEl.textContent = title;
+    textEl.innerHTML = content;
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden"; // 배경 스크롤 방지
+}
+
+/** 약관 모달 닫기 */
+function closeTermsModal() {
+    const modal = document.getElementById("termsModal");
+    modal.style.display = "none";
+    document.body.style.overflow = "auto"; // 스크롤 복원
 }
