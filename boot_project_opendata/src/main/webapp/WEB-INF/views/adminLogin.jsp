@@ -105,7 +105,6 @@
   </footer>
 
 
-  <!-- 외부 JS -->
-  <script src="/js/login.js"></script>
+  
 </body>
 </html>
