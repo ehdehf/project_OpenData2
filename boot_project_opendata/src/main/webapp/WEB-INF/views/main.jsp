@@ -870,6 +870,12 @@
   // 줌 변경 시: 마커/폴리곤 표시 + 줌 저장
   kakao.maps.event.addListener(map, 'zoom_changed', () => {
       updateVisibilityByZoom();
+	  // 상세 정보창 자동 닫기
+      if (map.getLevel() > 9 && currentOverlay) {
+          currentOverlay.setMap(null);
+          currentOverlay = null;
+          currentStationName = null;
+      }
       localStorage.setItem('savedLevel', map.getLevel());
 
       // 🔥 지도 확대되면(레벨 <= 9) 시도 정보창 강제로 제거
