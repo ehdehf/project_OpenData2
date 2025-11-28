@@ -154,18 +154,35 @@
 	</update>
 
 
-<!--	 소셜 로그인 회원 탈퇴 -->
-<!--	<delete id="deleteUser" parameterType="string">-->
-<!--		DELETE FROM opendata_users-->
-<!--		WHERE user_id = #{user_id}-->
-<!--	</delete>-->
-
-	<!-- 일반 회원 탈퇴 (비밀번호 확인) -->
-	<delete id="withdraw" parameterType="map">
-		DELETE FROM opendata_users
-		WHERE user_id = #{user_id}
-		AND user_pw = #{user_pw}
+	<delete id="withdrawSocial" parameterType="map">
+	    DELETE FROM opendata_users
+	    WHERE user_id = #{user_id}
 	</delete>
+
+	<!-- 회원 탈퇴: user_id로만 삭제 -->
+	<delete id="withdraw" parameterType="map">
+	    DELETE FROM opendata_users
+	    WHERE user_id = #{user_id}
+	</delete>
+	<!-- ✅ 회원 탈퇴 시 게시글 작성자 익명 처리 -->
+	<update id="anonymizePostWriterByUserId" parameterType="map">
+	    UPDATE post_board
+	    SET user_id = '알 수 없음'
+	    WHERE user_id = #{user_id}
+	</update>
+	
+	<update id="anonymizePostCommentWriterByUserId" parameterType="map">
+	    UPDATE post_board_comment
+	    SET user_id = '알 수 없음'
+	    WHERE user_id = #{user_id}
+	</update>
+	
+	<update id="anonymizeNoticeCommentWriterByUserId" parameterType="map">
+	    UPDATE notice_board_comment
+	    SET user_id = '알 수 없음'
+	    WHERE user_id = #{user_id}
+	</update>
+
 
 	<!-- 이용약관 동의 내역 저장 -->
 	<insert id="insertUserTermsAgreement" parameterType="map">
