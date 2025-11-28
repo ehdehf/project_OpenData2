@@ -104,14 +104,42 @@ public class UserServicelmpl implements UserService {
 	    return result;
 	}
 
+	@Override
+	@Transactional
 	public int withdraw(Map<String, String> param) {
-		// 비번 일치하면 1, 아니면 0
-		return sqlSession.delete("com.boot.dao.UserDAO.withdraw", param);
+	    String userId = param.get("user_id");
+	    String inputPw = param.get("user_pw");
+
+	    // 1) DB 비밀번호 조회
+	    String dbPw = sqlSession.selectOne("com.boot.dao.UserDAO.loginYn", param);
+	    if (dbPw == null || !passwordEncoder.matches(inputPw, dbPw)) {
+	        return 0; // 비밀번호 틀림
+	    }
+
+	    // 2) 게시글 작성자 익명화
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizePostWriterByUserId", param);
+
+	    // 3) 게시글 댓글 작성자 익명화
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizePostCommentWriterByUserId", param);
+
+	    // 4) 공지사항 댓글 작성자 익명화
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizeNoticeCommentWriterByUserId", param);
+
+	    // 5) 회원 삭제
+	    return sqlSession.delete("com.boot.dao.UserDAO.withdraw", param);
 	}
 
 	@Override
+	@Transactional
 	public int withdrawSocial(Map<String, Object> param) {
-		return sqlSession.delete("com.boot.dao.UserDAO.withdrawSocial", param);
+
+	    // 소셜 회원도 게시글/댓글 익명화는 동일하게 적용
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizePostWriterByUserId", param);
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizePostCommentWriterByUserId", param);
+	    sqlSession.update("com.boot.dao.UserDAO.anonymizeNoticeCommentWriterByUserId", param);
+
+	    // 회원 삭제
+	    return sqlSession.delete("com.boot.dao.UserDAO.withdraw", param);
 	}
 
 	// 아이디 중복 체크
