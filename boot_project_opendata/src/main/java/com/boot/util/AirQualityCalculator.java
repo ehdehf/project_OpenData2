@@ -34,6 +34,13 @@ public class AirQualityCalculator {
             List<AirQualityDTO> rows = grouped.get(sido);
             if (rows == null || rows.isEmpty()) continue;
 
+            // ⭐⭐ 가장 최신 측정시간 구하기 ⭐⭐
+            String latestTime = rows.stream()
+                    .map(AirQualityDTO::getDataTime)
+                    .filter(t -> t != null && !t.isBlank())
+                    .max(String::compareTo)
+                    .orElse("-");
+            
             double avgPm10 = rows.stream().mapToInt(AirQualityDTO::getPm10Value).average().orElse(0);
             double avgPm25 = rows.stream().mapToInt(AirQualityDTO::getPm25Value).average().orElse(0);
             double avgO3 = rows.stream().mapToDouble(AirQualityDTO::getO3Value).average().orElse(0);
@@ -65,6 +72,8 @@ public class AirQualityCalculator {
             dto.setKhaiValue(cai);
             dto.setDataTime(gradeText);
 
+            dto.setDataTime(latestTime);
+            
             result.put(sido, dto);
         }
 
