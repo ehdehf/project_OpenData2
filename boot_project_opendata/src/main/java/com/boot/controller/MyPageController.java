@@ -143,41 +143,66 @@ public class MyPageController {
     
  // 회원 탈퇴 페이지
     @GetMapping("/withdraw")
-    public String withdrawPage(HttpSession session) {
+    public String withdrawPage(HttpSession session, Model model) {
+
         String user_id = (String) session.getAttribute("loginId");
         if (user_id == null) {
             return "redirect:/login";
         }
-        
-        return "memberWithdraw";
-    }
 
+        // 로그인 중인 사용자 정보 조회
+        UserDTO user = userService.getUserById(user_id);
+
+        // ⭐ 반드시 user를 JSP로 전달해야 login_type 체크가 가능해짐
+        model.addAttribute("user", user);
+
+        return "memberWithdraw";  // 화면은 항상 보여준다!
+    }
     // 일반 회원 탈퇴 처리
     @PostMapping("/withdraw")
     public String withdrawProcess(
-            @RequestParam String user_pw,
+            @RequestParam(required = false) String user_pw,
             HttpSession session,
             RedirectAttributes rttr) {
-        
+
         String user_id = (String) session.getAttribute("loginId");
         if (user_id == null) {
             return "redirect:/login";
         }
-        
-        // 비밀번호 확인 후 탈퇴
+
+        // 현재 로그인한 사용자 정보 조회
+        UserDTO user = userService.getUserById(user_id);
+
+        // 🔵 소셜 로그인 사용자라면 비밀번호 없이 탈퇴 진행
+        if (user.getLogin_type() != null && !user.getLogin_type().trim().isEmpty()) {
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("user_id", user_id);
+
+            int result = userService.withdrawSocial(param);
+
+            if (result > 0) {
+                session.invalidate();
+                rttr.addFlashAttribute("msg", "소셜 회원 탈퇴가 완료되었습니다.");
+                return "redirect:/";
+            } else {
+                rttr.addFlashAttribute("error", "탈퇴 처리 중 오류가 발생했습니다.");
+                return "redirect:/mypage/withdraw";
+            }
+        }
+
+        // 🔴 일반 로그인 사용자 → 비밀번호 필수
         Map<String, String> param = new HashMap<>();
         param.put("user_id", user_id);
         param.put("user_pw", user_pw);
-        
+
         int result = userService.withdraw(param);
-        
+
         if (result > 0) {
-            // 탈퇴 성공 - 세션 무효화
             session.invalidate();
             rttr.addFlashAttribute("msg", "회원 탈퇴가 완료되었습니다.");
             return "redirect:/";
         } else {
-            // 비밀번호 불일치
             rttr.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "redirect:/mypage/withdraw";
         }
