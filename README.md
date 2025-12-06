@@ -82,6 +82,20 @@
 
 ---
 
+## 🧭 메뉴 구조도 (PDF)
+
+📄 메뉴 구조도 보기  
+👉 `/docs/menu-structure.pdf`
+
+---
+
+## 🖥 화면 설계서 (PDF)
+
+📄 화면 기획서 보기  
+👉 `/docs/ui-design.pdf`
+
+---
+
 ## 🗂 ERD 및 테이블 명세서 (PDF)
 
 📄 ERD  
