@@ -108,7 +108,6 @@
 
 ### 🌐 공공데이터 기능
 - 공공데이터 API 연동(대기질 정보)
-- JSON 파싱 및 DB 저장
 - 실시간 미세먼지 정보 제공
 - 지도 기반 위치 시각화
 - 히트맵 구현
@@ -155,10 +154,113 @@
 
 ## 🔍 핵심 구현 내용 (내가 담당한 기능)
 
-### ✔ 1. 공공데이터 API 연동 + JSON 파싱
-String url = api + serviceKey + "&returnType=json";
-ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+🔐 인증 / 회원 기능
+<details> <summary><strong>로그인 / 소셜 로그인(Kakao · Naver · Google)</strong> ●</summary>
+📌 설명
 
+OAuth2 기반 소셜 로그인 전체 플로우 구현
+
+로그인/로그아웃 및 세션 기반 인증 처리
+
+📸 스크린샷
+
+(이미지)
+
+</details> <details> <summary><strong>아이디·비밀번호 찾기</strong> ●</summary>
+📌 설명
+
+이메일 기반 인증 코드 발송
+
+비밀번호 재설정 기능 구현
+
+</details> <details> <summary><strong>탈퇴 회원 관리 및 계정 상태 관리</strong> ●</summary>
+📌 설명
+
+탈퇴 시 실제 삭제가 아닌 상태값 변경 방식
+
+관리자 페이지에서 조회 가능하도록 구성
+
+</details>
+🧭 사용자 기능
+<details> <summary><strong>지역 데이터 기반 히트맵 시각화</strong> ●</summary>
+📌 설명
+
+공공데이터 기반 대기질 정보를 활용해 히트맵 생성
+
+수치에 따라 색상 자동 변경
+
+📸 스크린샷
+
+(이미지)
+
+</details> <details> <summary><strong>CSV / Excel 다운로드 기능</strong> ●</summary>
+📌 설명
+
+지역별 미세먼지 데이터 파일 제공
+
+브라우저에서 즉시 다운로드 가능
+
+</details> <details> <summary><strong>지역별 실시간 대기질 조회</strong> ◐</summary>
+📌 설명
+
+(데이터는 API에서 받아왔지만 UI는 공통 작업)
+
+</details>
+💬 커뮤니티 기능
+<details> <summary><strong>공지사항 조회</strong> ◐</summary>
+📌 설명
+
+사용자용 공지사항 조회 기능
+
+</details>
+🌐 공공데이터 기능
+</details> <details> <summary><strong>공공데이터 API 연동</strong> ◐</summary>
+📌 설명
+
+국토환경공단 API 연동
+
+JSON 데이터 수집 및 가공
+
+<details> <summary><strong>지역 데이터 기반 히트맵 생성</strong> ●</summary>
+📌 설명
+
+공공데이터 API에서 받아온 값을 기반으로 오염도 가시화
+
+색상 스케일 설계 및 지도 오버레이 구현
+
+</details> <details> <summary><strong>실시간 미세먼지 정보 제공</strong> ◐</summary> </details>
+🛠 관리자 기능
+<details> <summary><strong>게시판 관리(공지사항·사용자게시판)</strong> ●</summary>
+📌 설명
+
+관리자 전용 공지사항 CRUD
+
+사용자 게시판 관리 기능 전체 담당
+
+</details>
+⚡ 성능 / 서버 기능
+<details> <summary><strong>Redis 기반 캐싱 처리</strong> ●</summary>
+📌 설명
+
+실시간 대기질 데이터 조회 성능 개선
+
+API 호출 부담 감소
+
+</details> <details> <summary><strong>Spring Scheduler 기반 자동 업데이트</strong> ●</summary>
+📌 설명
+
+대기질 데이터 자동 수집·저장
+
+매일/매시간 단위 스케줄링 가능
+
+</details> <details> <summary><strong>AWS EC2 / 서버 배포</strong> ●</summary>
+📌 설명
+
+Ubuntu 기반 환경 구성
+
+Tomcat 연동
+
+</details>
 
 ## 📬 프로젝트 구조
 
