@@ -221,6 +221,7 @@ OAuth2 기반 소셜 로그인 전체 플로우 구현
 
 JSON 데이터 수집 및 가공
 
+</details>
 <details> <summary><strong>지역 데이터 기반 히트맵 생성</strong> ●</summary>
 📌 설명
 
