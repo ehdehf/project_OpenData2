@@ -68,8 +68,8 @@
 
 | 분야 | 기술 |
 |------|-------|
-| **Backend** | Spring Boot, Java 17, MyBatis |
 | **Frontend** | Kakao Map API, JavaScript, AJAX, JSP |
+| **Backend** | Spring Boot, Java 17, MyBatis |
 | **Database** | Oracle 11g / 19c |
 | **API** | 공공데이터 대기질 API, Kakao Geocoding API |
 | **DevOps** | AWS EC2(Ubuntu), Nginx/Tomcat |
