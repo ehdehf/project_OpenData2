@@ -159,112 +159,98 @@
 
 ## 🔍 핵심 구현 내용 (내가 담당한 기능)
 
-🔐 인증 / 회원 기능
-<details> <summary><strong>로그인 / 소셜 로그인(Kakao · Naver · Google)</strong> ●</summary>
-📌 설명
-
-OAuth2 기반 소셜 로그인 전체 플로우 구현
-
-로그인/로그아웃 및 세션 기반 인증 처리
-
-📸 스크린샷
-
-(이미지)
-
-</details> <details> <summary><strong>아이디·비밀번호 찾기</strong> ●</summary>
-📌 설명
-
-이메일 기반 인증 코드 발송
-
-비밀번호 재설정 기능 구현
-
-</details> <details> <summary><strong>탈퇴 회원 관리 및 계정 상태 관리</strong> ●</summary>
-📌 설명
-
-탈퇴 시 실제 삭제가 아닌 상태값 변경 방식
-
-관리자 페이지에서 조회 가능하도록 구성
-
-</details>
 🧭 사용자 기능
-<details> <summary><strong>지역 데이터 기반 히트맵 시각화</strong> ●</summary>
+<details><summary><strong>◐ 실시간 전국 대기측정소 대기질 조회</strong> ◐</summary>
+
 📌 설명
 
-공공데이터 기반 대기질 정보를 활용해 히트맵 생성
+공공데이터 API 및 Kakao Map API를 연동하여 전국 측정소 대기질 조회
 
-수치에 따라 색상 자동 변경
+측정소 목록 로드 및 지도 마커 표시 로직 공동 구현
 
-📸 스크린샷
+</details> <details><summary><strong>◐ 관심지역(즐겨찾기) 등록/삭제 기능</strong> ◐</summary>
 
-(이미지)
-
-</details> <details> <summary><strong>CSV / Excel 다운로드 기능</strong> ●</summary>
 📌 설명
 
-지역별 미세먼지 데이터 파일 제공
+사용자별 즐겨찾기 측정소 등록/삭제 기능 일부 기여
 
-브라우저에서 즉시 다운로드 가능
-
-</details> <details> <summary><strong>지역별 실시간 대기질 조회</strong> ◐</summary>
-📌 설명
-
-(데이터는 API에서 받아왔지만 UI는 공통 작업)
+프론트·백엔드 공통 로직 개발 참여
 
 </details>
-💬 커뮤니티 기능
-<details> <summary><strong>공지사항 조회</strong> ◐</summary>
+🔐 인증 / 보안 기능 (담당 기능)
+<details><summary><strong>● 회원가입 / 로그인 / 로그아웃</strong> ●</summary>
+
 📌 설명
 
-사용자용 공지사항 조회 기능
+기본 회원가입/로그인/로그아웃 기능 구현
 
-</details>
-🌐 공공데이터 기능
-</details> <details> <summary><strong>공공데이터 API 연동</strong> ◐</summary>
+입력값 검증 및 에러 처리 구성
+
+</details> <details><summary><strong>● 사용자/관리자 인증 체계 분리 설계</strong> ●</summary>
+
 📌 설명
 
-국토환경공단 API 연동
+일반 사용자와 관리자의 인증 로직을 분리 설계
 
-JSON 데이터 수집 및 가공
+세션 구조, 접근 권한, 인증 흐름을 독립적으로 처리
 
-</details>
-<details> <summary><strong>지역 데이터 기반 히트맵 생성</strong> ●</summary>
+</details> <details><summary><strong>● BCrypt 기반 비밀번호 암호화</strong> ●</summary>
+
 📌 설명
 
-공공데이터 API에서 받아온 값을 기반으로 오염도 가시화
+BCryptPasswordEncoder를 사용한 비밀번호 단방향 해시 저장 구현
 
-색상 스케일 설계 및 지도 오버레이 구현
+</details> <details><summary><strong>● Remember-Me 기능 미사용 — 직접 쿠키 처리 방식 구축</strong> ●</summary>
 
-</details> <details> <summary><strong>실시간 미세먼지 정보 제공</strong> ◐</summary> </details>
-🛠 관리자 기능
-<details> <summary><strong>게시판 관리(공지사항·사용자게시판)</strong> ●</summary>
 📌 설명
 
-관리자 전용 공지사항 CRUD
+Spring Security의 Remember-Me 대신 직접 쿠키를 생성/파싱하는 방식 설계
 
-사용자 게시판 관리 기능 전체 담당
+로그인 유지 로직 완전 커스텀 구성
 
-</details>
-⚡ 성능 / 서버 기능
-<details> <summary><strong>Redis 기반 캐싱 처리</strong> ●</summary>
+</details> <details><summary><strong>● 관리자 OTP 2차 인증(6자리 코드 생성)</strong> ●</summary>
+
 📌 설명
 
-실시간 대기질 데이터 조회 성능 개선
+관리자 로그인 시 6자리 OTP 자동 생성
 
-API 호출 부담 감소
+3분 유효시간 설정
 
-</details> <details> <summary><strong>Spring Scheduler 기반 자동 업데이트</strong> ●</summary>
+인증 실패/만료 처리 로직 개발
+
+</details> <details><summary><strong>● 이메일 기반 OTP 전송 및 재전송 기능</strong> ●</summary>
+
 📌 설명
 
-대기질 데이터 자동 수집·저장
+이메일로 OTP 발송
 
-매일/매시간 단위 스케줄링 가능
+사용자가 요청 시 재전송 기능 제공
 
-</details> <details> <summary><strong>AWS EC2 / 서버 배포</strong> ●</summary>
+랜덤 코드 생성 로직 직접 구현
+
+</details> <details><summary><strong>● 인증 성공 시 관리자 세션(isAdmin=true) 부여</strong> ●</summary>
+
 📌 설명
 
-Ubuntu 기반 환경 구성
+OTP 인증 성공 시 관리자 세션 속성 부여
 
-Tomcat 연동
+사용자 세션과 관리자 세션을 독립적으로 저장
+
+</details> <details><summary><strong>● 세션 남은 시간 UI 표시 기능</strong> ●</summary>
+
+📌 설명
+
+세션 남은 시간을 사용자 화면에 실시간 표시
+
+세션 만료 직전 경고 UI 제공
+
+</details> <details><summary><strong>● 자동 로그아웃(30분 경과 시 세션 만료 처리)</strong> ●</summary>
+
+📌 설명
+
+30분 경과 시 세션 자동 삭제
+
+만료 시 사용자에게 알림 후 강제 로그아웃 처리
 
 </details>
 
