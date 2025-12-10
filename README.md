@@ -220,6 +220,8 @@ Spring Security의 Remember-Me 대신 직접 쿠키를 생성/파싱하는 방�
 
 인증 실패/만료 처리 로직 개발
 
+<img width="1470" height="904" alt="image" src="https://github.com/user-attachments/assets/f0542d05-2c94-42fb-812e-133c976465c2" />
+
 </details> <details><summary><strong>● 이메일 기반 OTP 전송 및 재전송 기능</strong> ●</summary>
 
 📌 설명
