@@ -248,6 +248,8 @@ OTP 인증 성공 시 관리자 세션 속성 부여
 
 세션 만료 직전 경고 UI 제공
 
+<img width="451" height="54" alt="image" src="https://github.com/user-attachments/assets/7c33bca0-2805-42ed-a38a-34681c66dfa8" />
+
 </details> <details><summary><strong>● 자동 로그아웃(30분 경과 시 세션 만료 처리)</strong> ●</summary>
 
 📌 설명
