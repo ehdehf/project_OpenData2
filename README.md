@@ -165,106 +165,126 @@
 
 ---
 
-## 🔍 핵심 구현 내용 (내가 담당한 기능) 
-●담당기능 ◐공동기여
+## 🔍 담당 기능
+🔐 인증·보안 및 사용자 세션 관리 기능 구현
 
-🧭 사용자 기능
-<details><summary><strong>◐ 실시간 전국 대기측정소 대기질 조회</strong> ◐</summary>
-
-📌 설명
-
-공공데이터 API 및 Kakao Map API를 연동하여 전국 측정소 대기질 조회
-
-측정소 목록 로드 및 지도 마커 표시 로직 공동 구현
-
-</details> <details><summary><strong>◐ 관심지역(즐겨찾기) 등록/삭제 기능</strong> ◐</summary>
+👤 사용자 기본 인증 기능
+<details> <summary><strong>회원가입 / 로그인 / 로그아웃</strong></summary>
 
 📌 설명
 
-사용자별 즐겨찾기 측정소 등록/삭제 기능 일부 기여
+기본적인 사용자 인증 흐름을 직접 구현했습니다.
 
-프론트·백엔드 공통 로직 개발 참여
+회원가입 / 로그인 / 로그아웃 기능 구현
+
+입력값 유효성 검증 및 예외 상황별 에러 처리 구성
+
+인증 실패 시 사용자 피드백 메시지 처리
 
 </details>
-
-🔐 인증 / 보안 기능 (담당 기능)
-<details><summary><strong>● 회원가입 / 로그인 / 로그아웃</strong> ●</summary>
-
-📌 설명
-
-기본 회원가입/로그인/로그아웃 기능 구현
-
-입력값 검증 및 에러 처리 구성
-
-</details> <details><summary><strong>● 사용자/관리자 인증 체계 분리 설계</strong> ●</summary>
+🔑 사용자 / 관리자 인증 체계 분리
+<details> <summary><strong>사용자 · 관리자 인증 로직 분리 설계</strong></summary>
 
 📌 설명
 
-일반 사용자와 관리자의 인증 로직을 분리 설계
+일반 사용자와 관리자의 인증 흐름을 분리하여
+보안성과 확장성을 고려한 구조로 설계했습니다.
 
-세션 구조, 접근 권한, 인증 흐름을 독립적으로 처리
+사용자 / 관리자 인증 로직 분리
 
-</details> <details><summary><strong>● BCrypt 기반 비밀번호 암호화</strong> ●</summary>
+접근 권한(Role)에 따른 페이지 접근 제어
+
+인증 흐름 및 세션 구조 독립 관리
+
+</details>
+🔒 비밀번호 보안 처리
+<details> <summary><strong>BCrypt 기반 비밀번호 암호화</strong></summary>
+
+📌 설명
+
+비밀번호는 평문 저장 없이
+BCrypt 해시 알고리즘을 사용해 안전하게 관리했습니다.
+
+BCryptPasswordEncoder 사용
+
+단방향 암호화 적용
+
+인증 시 해시 비교 방식으로 검증
+
+</details>
+🍪 로그인 유지 기능 (커스텀 구현)
+<details> <summary><strong>Remember-Me 미사용 · 직접 쿠키 처리 방식 구축</strong></summary>
 
 📌 설명
 
-BCryptPasswordEncoder를 사용한 비밀번호 단방향 해시 저장 구현
+Spring Security의 Remember-Me 기능을 사용하지 않고,
+직접 쿠키를 생성·검증하는 방식으로 로그인 유지 기능을 구현했습니다.
 
-</details> <details><summary><strong>● Remember-Me 기능 미사용 — 직접 쿠키 처리 방식 구축</strong> ●</summary>
+로그인 유지용 쿠키 직접 생성/파싱
+
+만료 시간 및 검증 로직 직접 설계
+
+인증 흐름을 명확하게 제어할 수 있도록 구성
+
+</details>
+🛡 관리자 OTP 2차 인증
+<details> <summary><strong>관리자 OTP 2차 인증 (6자리 코드)</strong></summary> <div align="center"> <img src="https://github.com/user-attachments/assets/f0542d05-2c94-42fb-812e-133c976465c2" width="900"/> <br> <sub>▲ 관리자 로그인 시 OTP 2차 인증 화면</sub> </div>
 
 📌 설명
 
-Spring Security의 Remember-Me 대신 직접 쿠키를 생성/파싱하는 방식 설계
-
-로그인 유지 로직 완전 커스텀 구성
-
-</details> <details><summary><strong>● 관리자 OTP 2차 인증(6자리 코드 생성)</strong> ●</summary>
-
-📌 설명
+관리자 계정 보안을 강화하기 위해
+OTP 기반 2차 인증 절차를 추가했습니다.
 
 관리자 로그인 시 6자리 OTP 자동 생성
 
-3분 유효시간 설정
+OTP 유효시간 3분 설정
 
-인증 실패/만료 처리 로직 개발
+인증 실패 / 만료 처리 로직 구현
 
-<img width="1470" height="904" alt="image" src="https://github.com/user-attachments/assets/f0542d05-2c94-42fb-812e-133c976465c2" />
-
-</details> <details><summary><strong>● 이메일 기반 OTP 전송 및 재전송 기능</strong> ●</summary>
-
-📌 설명
-
-이메일로 OTP 발송
-
-사용자가 요청 시 재전송 기능 제공
-
-랜덤 코드 생성 로직 직접 구현
-
-</details> <details><summary><strong>● 인증 성공 시 관리자 세션(isAdmin=true) 부여</strong> ●</summary>
+</details>
+📧 이메일 기반 OTP 전송
+<details> <summary><strong>이메일 OTP 전송 및 재전송 기능</strong></summary>
 
 📌 설명
 
-OTP 인증 성공 시 관리자 세션 속성 부여
+OTP 코드를 이메일로 전송하고,
+사용자 요청 시 재전송이 가능하도록 구성했습니다.
 
-사용자 세션과 관리자 세션을 독립적으로 저장
+이메일 전송 로직 구현
 
-</details> <details><summary><strong>● 세션 남은 시간 UI 표시 기능</strong> ●</summary>
+랜덤 OTP 코드 생성
 
-📌 설명
+재전송 시 기존 OTP 무효화 처리
 
-세션 남은 시간을 사용자 화면에 실시간 표시
-
-세션 만료 직전 경고 UI 제공
-
-<img width="451" height="54" alt="image" src="https://github.com/user-attachments/assets/7c33bca0-2805-42ed-a38a-34681c66dfa8" />
-
-</details> <details><summary><strong>● 자동 로그아웃(30분 경과 시 세션 만료 처리)</strong> ●</summary>
+</details>
+🧑‍💼 관리자 세션 분리 관리
+<details> <summary><strong>관리자 세션 분리 및 권한 부여</strong></summary>
 
 📌 설명
 
-30분 경과 시 세션 자동 삭제
+OTP 인증 성공 시
+관리자 전용 세션을 별도로 부여하여 관리했습니다.
 
-만료 시 사용자에게 알림 후 강제 로그아웃 처리
+isAdmin = true 세션 속성 부여
+
+사용자 세션과 관리자 세션 분리 관리
+
+관리자 전용 기능 접근 제어
+
+</details>
+⏱ 세션 시간 관리 및 UX 개선
+<details> <summary><strong>세션 남은 시간 표시 및 자동 로그아웃</strong></summary> <div align="center"> <img src="https://github.com/user-attachments/assets/7c33bca0-2805-42ed-a38a-34681c66dfa8" width="450"/> <br> <sub>▲ 세션 남은 시간 실시간 표시 UI</sub> </div>
+
+📌 설명
+
+세션 만료로 인한 사용자 혼란을 줄이기 위해
+세션 상태를 시각적으로 제공했습니다.
+
+세션 남은 시간 실시간 표시
+
+만료 직전 경고 UI 제공
+
+30분 경과 시 세션 자동 만료 및 강제 로그아웃 처리
 
 </details>
 
