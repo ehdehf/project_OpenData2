@@ -244,6 +244,13 @@ OTP 유효시간 3분 설정
 </details>
 📧 이메일 기반 OTP 전송
 <details> <summary><strong>이메일 OTP 전송 및 재전송 기능</strong></summary>
+    
+<div align="center">
+  <img src="opendata_admin_login/email.png" width="45%"/>
+  <img src="opendata_admin_login/resend_otp.png" width="45%"/>
+  <br>
+  <sub>▲ 이메일을 통한 OTP 발송 및 재전송 화면</sub>
+</div>
 
 📌 설명
 
